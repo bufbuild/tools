@@ -20,7 +20,7 @@
 //
 // To specify which plugin to use, use the PLUGIN_PATH environment variable key.
 //
-// PLUGIN_PATH=protoc-gen-grpc-gateway protoc --strategy-all-to_strategy_directory_out=. $(find . -name '*.proto')
+// PLUGIN_PATH=protoc-gen-grpc-gateway protoc --by-dir_out=. $(find . -name '*.proto')
 package main
 
 import (

@@ -1,5 +1,5 @@
 /.tmp/
-/protoc-gen-strategy-all-to-strategy-directory
+/protoc-gen-by-dir
 *.pprof
 *.svg
 cover.out
