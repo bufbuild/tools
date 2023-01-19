@@ -1,4 +1,4 @@
-Skeleton Repository
+Tools
 =======
 
 A collection of tools written at Buf.
