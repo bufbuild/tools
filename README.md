@@ -1,7 +1,9 @@
-Skeleton Repository
+Tools
 =======
 
 A collection of tools written at Buf.
+
+- [protoc-gen-by-dir](cmd/protoc-gen-by-dir): A helper `protoc` plugin to assist in the authoring of custom remote plugins for the Buf Schema Registry to invoke a plugin remotely on a per-directory basis within a single container.
 
 ## Status: Alpha
 
