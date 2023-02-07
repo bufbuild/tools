@@ -50,3 +50,11 @@ issues:
     # Don't ban use of fmt.Errorf to create new errors, but the remaining
     # checks from err113 are useful.
     - "err113: do not define dynamic errors.*"
+  exclude-rules:
+    # We don't want to list out all the fields for appcmd.Cmd or flags.
+    - linters: [exhaustruct]
+      path: cmd/license-header/main.go
+    # The current nested block is actually the simplest way to do this
+    # without refactoring.
+    - linters: [nestif]
+      path: cmd/license-header/main.go

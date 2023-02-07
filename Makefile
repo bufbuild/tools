@@ -49,19 +49,10 @@ lintfix: $(BIN)/golangci-lint $(BIN)/buf ## Automatically fix some lint errors
 
 .PHONY: generate
 generate: $(BIN)/license-header ## Regenerate code and licenses
-	@# We want to operate on a list of modified and new files, excluding
-	@# deleted and ignored files. git-ls-files can't do this alone. comm -23 takes
-	@# two files and prints the union, dropping lines common to both (-3) and
-	@# those only in the second file (-2). We make one git-ls-files call for
-	@# the modified, cached, and new (--others) files, and a second for the
-	@# deleted files.
-	comm -23 \
-		<(git ls-files --cached --modified --others --no-empty-directory --exclude-standard | sort -u | grep -v $(LICENSE_IGNORE) ) \
-		<(git ls-files --deleted | sort -u) | \
-		xargs $(BIN)/license-header \
-			--license-type apache \
-			--copyright-holder "Buf Technologies, Inc." \
-			--year-range "$(COPYRIGHT_YEARS)"
+	$(BIN)/license-header \
+		--license-type apache \
+		--copyright-holder "Buf Technologies, Inc." \
+		--year-range "$(COPYRIGHT_YEARS)" $(LICENSE_IGNORE)
 
 .PHONY: upgrade
 upgrade: ## Upgrade dependencies
@@ -74,9 +65,8 @@ checkgenerate:
 
 $(BIN)/license-header: Makefile
 	@mkdir -p $(@D)
-	GOBIN=$(abspath $(@D)) $(GO) install \
-		  github.com/bufbuild/buf/private/pkg/licenseheader/cmd/license-header@v1.9.0
+	GOBIN=$(abspath $(@D)) $(GO) install ./cmd/license-header
 
 $(BIN)/golangci-lint: Makefile
 	@mkdir -p $(@D)
-	GOBIN=$(abspath $(@D)) $(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.50.0
+	GOBIN=$(abspath $(@D)) $(GO) install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.51.0
