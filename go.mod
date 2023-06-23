@@ -11,12 +11,16 @@ require (
 
 require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
+	github.com/felixge/fgprof v0.9.3 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gofrs/uuid v4.4.0+incompatible // indirect
+	github.com/google/pprof v0.0.0-20230131232505-5a9e8f65f08f // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/pkg/profile v1.7.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	go.opentelemetry.io/otel v1.12.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.12.0 // indirect
 	go.opentelemetry.io/otel/trace v1.12.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
