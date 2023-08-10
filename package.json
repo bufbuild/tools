@@ -1,5 +1,4 @@
 {
-  "name": "@bufbuild/connect-es-utils",
   "private": true,
   "workspaces": [
     "./npm-packages/license-header"
