@@ -3,7 +3,7 @@ Tools
 
 A collection of tools written at Buf.
 
-- [license-header](cmd/license-header): A tool to add and update license headers in source code.
+- [license-header](cmd/license-header): A tool to add and update license headers in source code. Also available [for npm](npm-packages/license-header).
 - [protoc-gen-by-dir](cmd/protoc-gen-by-dir): A helper `protoc` plugin to assist in the authoring of custom remote plugins for the Buf Schema Registry to invoke a plugin remotely on a per-directory basis within a single container.
 
 ## Status: Alpha
