@@ -4,3 +4,4 @@
 *.pprof
 *.svg
 cover.out
+node_modules

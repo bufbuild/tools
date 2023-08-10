@@ -1,0 +1,22 @@
+{
+  "name": "@bufbuild/connect-es-utils",
+  "private": true,
+  "workspaces": [
+    "./npm-packages/license-header"
+  ],
+  "scripts": {
+    "test": "npm run -ws test --if-present",
+    "generate": "npm run -ws generate --if-present"
+  },
+  "type": "module",
+  "engineStrict": true,
+  "engines": {
+    "node": ">=18",
+    "npm": ">=9"
+  },
+  "licenseHeader": {
+    "licenseType": "apache",
+    "yearRange": "2023",
+    "copyrightHolder": "Buf Technologies, Inc."
+  }
+}
