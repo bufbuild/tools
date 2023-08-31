@@ -268,7 +268,7 @@ export function gitLsFiles(opt) {
     const files = r.stdout.trim().split("\n");
     const matchInclude = opt?.include ?? "**/*";
     const matchIgnore = opt?.ignore ?? [];
-    const match = picomatch(matchInclude, {ignore: matchIgnore});
+    const match = picomatch(matchInclude, {ignore: matchIgnore, dot: true});
     return {
         ok: true,
         files: files.filter(f => match(f)),
