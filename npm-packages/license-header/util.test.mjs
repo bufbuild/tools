@@ -42,6 +42,7 @@ describe("gitLsFiles", () => {
             "config/golden/package.json",
             "config/incomplete/package.json",
             "config/invalid-type/package.json",
+            "files/.eslintrc.js",
             "files/a.js",
             "files/b.js",
             "files/c.js"
