@@ -27,6 +27,7 @@ describe("gitLsFiles", () => {
             "testdata/config/golden/package.json",
             "testdata/config/incomplete/package.json",
             "testdata/config/invalid-type/package.json",
+            "testdata/files/.eslintrc.js",
             "testdata/files/a.js",
             "testdata/files/b.js",
             "testdata/files/c.js"
@@ -41,6 +42,7 @@ describe("gitLsFiles", () => {
             "config/golden/package.json",
             "config/incomplete/package.json",
             "config/invalid-type/package.json",
+            "files/.eslintrc.js",
             "files/a.js",
             "files/b.js",
             "files/c.js"
