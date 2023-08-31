@@ -103,6 +103,7 @@ describe("parseCommandLineArgs", () => {
             ok: true,
             path: ".",
             ignorePatterns: [],
+            check: false,
             version: false,
             help: false,
         });
@@ -125,6 +126,7 @@ describe("parseCommandLineArgs", () => {
         const c = parseCommandLineArgs([
             "--help",
             "--version",
+            "--check",
             "--ignore",
             "foo",
             "--ignore",
@@ -144,6 +146,7 @@ describe("parseCommandLineArgs", () => {
             licenseType: "fake-license",
             yearRange: "fake year",
             copyrightHolder: "fake owner",
+            check: true,
             version: true,
             help: true,
         });

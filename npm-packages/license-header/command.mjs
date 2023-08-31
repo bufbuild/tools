@@ -26,7 +26,7 @@ if (!args.ok) {
     process.exit(1);
 }
 if (args.help) {
-    console.log(`USAGE: license-header [path] [--ignore glob-pattern...] [--license-type ${Object.keys(licenses).join("|")}] [--year-range text] [--copyright-holder text]`);
+    console.log(`USAGE: license-header [path] [--ignore glob-pattern...] [--check] [--license-type ${Object.keys(licenses).join("|")}] [--year-range text] [--copyright-holder text]`);
     console.log(`As an alternative to the command line, license properties can be defined in package.json under "licenseHeader".`);
     process.exit(0);
 }
@@ -55,7 +55,7 @@ if (!lsFiles.ok) {
     process.exit(1);
 }
 
-let updated = 0;
+const updated = [];
 for (const filename of lsFiles.files) {
     try {
         const data = readFileSync(filename, "utf-8");
@@ -67,14 +67,26 @@ for (const filename of lsFiles.files) {
             data
         );
         if (data !== result) {
-            writeFileSync(filename, result, "utf-8");
-            updated++;
+            if (!args.check) {
+                writeFileSync(filename, result, "utf-8");
+            }
+            updated.push(filename);
         }
     } catch (e) {
         process.stderr.write(`${String(e)}\n`);
         process.exit(1);
     }
 }
-console.log(`updated ${updated} license headers in ${lsFiles.files.length} files.`);
+if (args.check) {
+    if (updated.length > 0) {
+        process.stderr.write(`missing license header in ${updated.length} files:\n`);
+        for (const file of updated) {
+            process.stderr.write(`${file}\n`);
+        }
+        process.exit(1);
+    }
+    process.exit(0);
+}
+console.log(`updated ${updated.length} license headers in ${lsFiles.files.length} files.`);
 
 

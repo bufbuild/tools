@@ -39,6 +39,7 @@ import picomatch from "picomatch";
  * @property {string} [yearRange]
  * @property {string} [copyrightHolder]
  * @property {Array<string>} ignorePatterns
+ * @property {boolean} check
  * @property {boolean} version
  * @property {boolean} help
  */
@@ -52,6 +53,7 @@ export function parseCommandLineArgs(args) {
     const parsed = {
         ok: true,
         ignorePatterns: [],
+        check: false,
         version: false,
         help: false,
     }
@@ -67,6 +69,12 @@ export function parseCommandLineArgs(args) {
                 break;
             case "--version":
                 parsed.version = true;
+                break;
+            case "--check":
+                if (parsed.check) {
+                    break;
+                }
+                parsed.check = true;
                 break;
             case "--ignore":
                 const val = args.shift();
