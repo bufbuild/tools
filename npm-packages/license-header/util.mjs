@@ -130,7 +130,7 @@ export function parseCommandLineArgs(args) {
 
 /**
  * @param {string} [cwd]
- * @return PackageJsonConfig|null|GentleError
+ * @return {PackageJsonConfig|null|GentleError}
  */
 export function findPackageJsonConfig(cwd) {
     const repoRoot = gitRevParseTopLevel(cwd);
@@ -149,7 +149,6 @@ export function findPackageJsonConfig(cwd) {
         base = path.resolve(base, "..");
         // stop at top level of git repo
         if (!base.startsWith(repoRoot)) {
-            console.log("stop searching - ", base, "is outside of repo ", repoRoot)
             break;
         }
     }
@@ -191,32 +190,14 @@ function parsePackageJsonConfig(pkgPath) {
 
 /**
  * @param {string} [cwd]
- * @return string|GentleError
+ * @return {string|GentleError}
  */
 function gitRevParseTopLevel(cwd) {
-    const command = "git";
-    const args = [
-        "rev-parse",
-        "--show-toplevel",
-    ];
-    const o = {
-        cwd: cwd ?? process.cwd(),
-        encoding: "utf-8",
-    };
-    const r = spawnSync(command, args, o);
-    if (r.error) {
-        return {
-            ok: false,
-            errorMessage: `Failed to run git rev-parse: ${r.error}`,
-        };
+    const stdOut = runStdOut("git", ["rev-parse", "--show-toplevel"], cwd);
+    if (typeof stdOut != "string") {
+        return stdOut;
     }
-    if (r.status !== 0) {
-        return {
-            ok: false,
-            errorMessage: `git rev-parse exited with code ${r.status}: \n${r.stderr}`,
-        };
-    }
-    return r.stdout.trim();
+    return stdOut.trim();
 }
 
 
@@ -235,11 +216,10 @@ function gitRevParseTopLevel(cwd) {
  */
 /**
  * @param {GitLsFilesOptions|undefined} opt
- * @return GitLsFilesResult|GentleError
+ * @return {GitLsFilesResult|GentleError}
  */
 export function gitLsFiles(opt) {
-    const command = "git";
-    const args = [
+    const allOut = runStdOut("git", [
         "ls-files",
         "--cached",
         "--modified",
@@ -247,32 +227,59 @@ export function gitLsFiles(opt) {
         "--exclude-standard",
         "--deduplicate",
         opt?.path ?? ".",
-    ];
-    const o = {
-        cwd: path.resolve(opt?.cwd ?? process.cwd()),
-        encoding: "utf-8",
+    ], opt.cwd);
+    if (typeof allOut != "string") {
+        return allOut;
+    }
+    const deletedOut = runStdOut("git", [
+        "ls-files",
+        "--deleted",
+        opt?.path ?? ".",
+    ], opt.cwd);
+    if (typeof deletedOut != "string") {
+        return deletedOut;
+    }
+    const allFiles = allOut.trim().split("\n").filter(f => f !== "");
+    const deletedFiles = deletedOut.trim().split("\n").filter(f => f !== "");
+    const matchInclude = opt?.include ?? "**/*";
+    const matchIgnore = opt?.ignore ?? [];
+    matchIgnore.push(deletedFiles);
+    const match = picomatch(matchInclude, {
+        ignore: matchIgnore,
+        dot: true,
+    });
+    return {
+        ok: true,
+        files: allFiles.filter(f => match(f)),
     };
-    const r = spawnSync(command, args, o);
+}
+
+
+/**
+ * @param {string} command
+ * @param {Array<string>} args
+ * @param {string} [cwd]
+ * @return {string|GentleError}
+ */
+function runStdOut(command, args, cwd) {
+    const r = spawnSync(command, args, {
+        cwd: path.resolve(cwd ?? process.cwd()),
+        encoding: "utf-8",
+    });
+    const fullCommand = command + (args.length > 0 ? (" " + args.join(" ")) : "");
     if (r.error) {
         return {
             ok: false,
-            errorMessage: `Failed to run git ls-files: ${r.error}`,
+            errorMessage: `Failed to run ${fullCommand}: ${r.error}`,
         };
     }
     if (r.status !== 0) {
         return {
             ok: false,
-            errorMessage: `git ls-files exited with code ${r.status}: \n${r.stderr}`,
+            errorMessage: `${fullCommand} exited with code ${r.status}: \n${r.stderr}`,
         };
     }
-    const files = r.stdout.trim().split("\n");
-    const matchInclude = opt?.include ?? "**/*";
-    const matchIgnore = opt?.ignore ?? [];
-    const match = picomatch(matchInclude, {ignore: matchIgnore, dot: true});
-    return {
-        ok: true,
-        files: files.filter(f => match(f)),
-    };
+    return r.stdout;
 }
 
 export function getSelfVersion() {
