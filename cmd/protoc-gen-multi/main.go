@@ -29,22 +29,16 @@ import (
 )
 
 func main() {
-	if err := run(context.Background()); err != nil {
+	args := os.Args[1:] // Args from the command line invocation.
+	if err := run(context.Background(), args, os.Stdin, os.Stdout); err != nil {
 		fmt.Fprintf(os.Stderr, "failed: %v", err)
 		os.Exit(1)
 	}
 }
 
-// plugin represents a protoc plugin.
-type plugin struct {
-	name string // protoc-gen-<name>
-	out  string // --<name>_out
-	opt  string // --<name>_opt
-}
-
-func run(ctx context.Context) error {
+func run(ctx context.Context, args []string, in io.Reader, out io.Writer) error {
 	var input bytes.Buffer
-	if _, err := io.Copy(&input, os.Stdin); err != nil {
+	if _, err := io.Copy(&input, in); err != nil {
 		return err
 	}
 	var request pluginpb.CodeGeneratorRequest
@@ -52,21 +46,21 @@ func run(ctx context.Context) error {
 		return err
 	}
 	var response pluginpb.CodeGeneratorResponse
-	if err := generate(ctx, &request, &response); err != nil {
+	if err := generate(ctx, args, &request, &response); err != nil {
 		response.Error = proto.String(err.Error())
 	}
 	output, err := proto.Marshal(&response)
 	if err != nil {
 		return err
 	}
-	if _, err := os.Stdout.Write(output); err != nil {
+	if _, err := out.Write(output); err != nil {
 		return err
 	}
 	return nil
 }
 
-func generate(ctx context.Context, request *pluginpb.CodeGeneratorRequest, response *pluginpb.CodeGeneratorResponse) error {
-	args := os.Args[1:] // Args from the command line invocation.
+func generate(ctx context.Context, args []string, request *pluginpb.CodeGeneratorRequest, response *pluginpb.CodeGeneratorResponse) error {
+	// Parse args from request parameters and append to args.
 	if params := request.GetParameter(); params != "" {
 		params = strings.ReplaceAll(params, ",--", " --")  // Handle comma separated flags.
 		args = append(args, strings.Split(params, " ")...) // Separate flags.
@@ -113,6 +107,13 @@ func generate(ctx context.Context, request *pluginpb.CodeGeneratorRequest, respo
 		response.File = append(response.File, pluginResponse.File...)
 	}
 	return nil
+}
+
+// plugin represents a protoc plugin.
+type plugin struct {
+	name string // protoc-gen-<name>
+	out  string // --<name>_out
+	opt  string // --<name>_opt
 }
 
 // parsePlugins parses the plugins from the command line arguments.
