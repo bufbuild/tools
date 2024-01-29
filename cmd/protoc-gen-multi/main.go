@@ -67,7 +67,7 @@ func generate(ctx context.Context, args []string, request *pluginpb.CodeGenerato
 	}
 	plugins, err := parsePlugins(args)
 	if err != nil {
-		return err
+		return fmt.Errorf("invalid argument: %w", err)
 	}
 	for _, plugin := range plugins {
 		request.Parameter = proto.String(plugin.opt)
@@ -125,10 +125,10 @@ func parsePlugins(args []string) (map[string]plugin, error) {
 	plugins := make(map[string]plugin, len(args)/2)
 	for _, flag := range args {
 		if !strings.HasPrefix(flag, "--") {
-			return nil, fmt.Errorf("invalid flag: %s", flag)
+			return nil, fmt.Errorf("expected protoc like flag \"--<name>_(out|opt)=<param>\": %q", flag)
 		}
-		flag = strings.TrimPrefix(flag, "--")
-		value, arg, _ := strings.Cut(flag, "=")
+		keyvalue := strings.TrimPrefix(flag, "--")
+		value, arg, _ := strings.Cut(keyvalue, "=")
 		if strings.HasSuffix(value, "_out") {
 			name := strings.TrimSuffix(value, "_out")
 			plugin := plugins[name]
@@ -142,7 +142,7 @@ func parsePlugins(args []string) (map[string]plugin, error) {
 			plugin.opt = arg
 			plugins[name] = plugin
 		} else {
-			return nil, fmt.Errorf("invalid flag: %s", flag)
+			return nil, fmt.Errorf("expected suffix \"_opt\" or \"_out\": %q", flag)
 		}
 	}
 	return plugins, nil
