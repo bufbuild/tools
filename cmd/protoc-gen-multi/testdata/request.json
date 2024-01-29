@@ -1,0 +1,168 @@
+{
+  "fileToGenerate":  [
+    "example.proto"
+  ],
+  "parameter":  "--go_out=gen --go_opt=paths=source_relative",
+  "protoFile":  [
+    {
+      "name":  "example.proto",
+      "package":  "acme.v1.example",
+      "messageType":  [
+        {
+          "name":  "Example",
+          "field":  [
+            {
+              "name":  "name",
+              "number":  1,
+              "label":  "LABEL_OPTIONAL",
+              "type":  "TYPE_STRING",
+              "jsonName":  "name"
+            }
+          ]
+        }
+      ],
+      "options":  {
+        "goPackage":  "github.com/bufbuild/tools/cmd/protoc-gen-mutli"
+      },
+      "sourceCodeInfo":  {
+        "location":  [
+          {
+            "span":  [
+              0,
+              0,
+              8,
+              1
+            ]
+          },
+          {
+            "path":  [
+              12
+            ],
+            "span":  [
+              0,
+              0,
+              18
+            ]
+          },
+          {
+            "path":  [
+              2
+            ],
+            "span":  [
+              2,
+              0,
+              24
+            ]
+          },
+          {
+            "path":  [
+              8
+            ],
+            "span":  [
+              4,
+              0,
+              69
+            ]
+          },
+          {
+            "path":  [
+              8,
+              11
+            ],
+            "span":  [
+              4,
+              0,
+              69
+            ]
+          },
+          {
+            "path":  [
+              4,
+              0
+            ],
+            "span":  [
+              6,
+              0,
+              8,
+              1
+            ]
+          },
+          {
+            "path":  [
+              4,
+              0,
+              1
+            ],
+            "span":  [
+              6,
+              8,
+              15
+            ]
+          },
+          {
+            "path":  [
+              4,
+              0,
+              2,
+              0
+            ],
+            "span":  [
+              7,
+              2,
+              18
+            ]
+          },
+          {
+            "path":  [
+              4,
+              0,
+              2,
+              0,
+              5
+            ],
+            "span":  [
+              7,
+              2,
+              8
+            ]
+          },
+          {
+            "path":  [
+              4,
+              0,
+              2,
+              0,
+              1
+            ],
+            "span":  [
+              7,
+              9,
+              13
+            ]
+          },
+          {
+            "path":  [
+              4,
+              0,
+              2,
+              0,
+              3
+            ],
+            "span":  [
+              7,
+              16,
+              17
+            ]
+          }
+        ]
+      },
+      "syntax":  "proto3"
+    }
+  ],
+  "compilerVersion":  {
+    "major":  4,
+    "minor":  23,
+    "patch":  4,
+    "suffix":  ""
+  }
+}
