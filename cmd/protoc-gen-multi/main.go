@@ -24,7 +24,6 @@ import (
 	"path"
 	"strings"
 
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/pluginpb"
 )
