@@ -27,7 +27,7 @@ In this example, we’ll demonstrate how to package the following plugins into t
 
 ### Step 1 - Create an organization to push custom plugin(s)
 
-For this example let’s use https://bufbuild.internal/custom-plugins
+For this example let’s use https://buf.example.com/custom-plugins
 
 ### Step 2 - Build a Docker image
 
@@ -59,7 +59,7 @@ ENTRYPOINT [ "protoc-gen-multi" ]
 Build the image with a tag referencing the organization and plugin name:
 
 ```sh
-docker buildx build --platform linux/arm64 -t bufbuild.internal/local/multi:v0.1.0 .
+docker buildx build --platform linux/amd64 -t buf.example.com/custom-plugins/multi:v0.1.0 .
 ```
 
 ### Step 3 - Create a buf.plugin.yaml file
@@ -68,7 +68,7 @@ At the very minimum you’ll need the following fields set:
 
 ```bash
 version: v1
-name: bufbuild.internal/local/multi
+name: buf.example.com/custom-plugins/multi
 plugin_version: v0.1.0
 output_languages:
   - go
@@ -98,14 +98,14 @@ There are additional fields that can be set. Please refer to the `buf.plugin.yam
 ```bash
 buf beta registry plugin push \
     --visibility public \
-    --image bufbuild.internal/local/multi:v1.0.0 \
-    --override-remote=bufbuild.internal
+    --image buf.example.com/custom-plugins/multi:v1.0.0 \
+    --override-remote=buf.example.com
 ```
 
 Now, when you install a Generated SDK from the BSR, e.g.
 
 ```bash
-go get bufbuild.internal/gen/go/acme/petapis/local/multi@latest
+go get buf.example.com/gen/go/acme/petapis/custom-plugins/multi@latest
 ```
 
 The BSR will generate a single package containing the output of all three plugins. It will not attempt to build plugin dependencies. This replicates the behavior of manually generating these plugins into the same output directory.
