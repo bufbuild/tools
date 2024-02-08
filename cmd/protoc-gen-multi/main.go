@@ -79,7 +79,10 @@ func generate(ctx context.Context, args []string, request *pluginpb.CodeGenerato
 		pluginResponse := &outs[i]
 		// Execute the plugin.
 		group.Go(func() error {
-			return plugin.generate(ctx, pluginRequest, pluginResponse)
+			if err := plugin.generate(ctx, pluginRequest, pluginResponse); err != nil {
+				return fmt.Errorf("failed to execute plugin: %s: %w", plugin.name, err)
+			}
+			return nil
 		})
 	}
 	if err := group.Wait(); err != nil {
