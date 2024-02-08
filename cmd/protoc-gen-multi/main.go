@@ -149,6 +149,8 @@ func parsePlugins(args []string) ([]plugin, error) {
 	return plugins, nil
 }
 
+// generate executes the plugin with the given request and unmarshals the response.
+// Modifies both the request and response in place.
 func (p plugin) generate(ctx context.Context, pluginRequest *pluginpb.CodeGeneratorRequest, pluginResponse *pluginpb.CodeGeneratorResponse) error {
 	pluginRequest.Parameter = proto.String(p.opt)
 	pluginInput, err := proto.Marshal(pluginRequest)
@@ -167,7 +169,6 @@ func (p plugin) generate(ctx context.Context, pluginRequest *pluginpb.CodeGenera
 		return err
 	}
 	for _, file := range pluginResponse.File {
-		fmt.Println("file", file)
 		if file.Name != nil {
 			file.Name = proto.String(path.Join(p.out, file.GetName()))
 		}
