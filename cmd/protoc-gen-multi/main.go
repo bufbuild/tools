@@ -70,14 +70,13 @@ func generate(ctx context.Context, args []string, request *pluginpb.CodeGenerato
 	if err != nil {
 		return fmt.Errorf("invalid argument: %w", err)
 	}
-	pluginsN := len(plugins)
 	group, ctx := errgroup.WithContext(ctx)
-	outs := make([]pluginpb.CodeGeneratorResponse, pluginsN)
+	outs := make([]pluginpb.CodeGeneratorResponse, len(plugins))
 	for i, plugin := range plugins {
 		plugin := plugin
 		pluginRequest := proto.Clone(request).(*pluginpb.CodeGeneratorRequest)
 		pluginResponse := &outs[i]
-		// Execute the plugin.
+		// Execute the plugin in a separate goroutine.
 		group.Go(func() error {
 			if err := plugin.generate(ctx, pluginRequest, pluginResponse); err != nil {
 				return fmt.Errorf("failed to execute plugin: %s: %w", plugin.name, err)
@@ -85,6 +84,7 @@ func generate(ctx context.Context, args []string, request *pluginpb.CodeGenerato
 			return nil
 		})
 	}
+	// Wait for all plugins to complete.
 	if err := group.Wait(); err != nil {
 		return err
 	}
