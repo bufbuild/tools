@@ -163,12 +163,14 @@ func (p plugin) generate(ctx context.Context, pluginRequest *pluginpb.CodeGenera
 	name := "protoc-gen-" + p.name
 	cmd := exec.CommandContext(ctx, name)
 	cmd.Stdin = bytes.NewReader(pluginInput)
-	var out bytes.Buffer
-	cmd.Stdout = &out
+	var stdout bytes.Buffer
+	cmd.Stdout = &stdout
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
 	if err := cmd.Run(); err != nil {
-		return err
+		return fmt.Errorf("%s: %s", err, stderr.String())
 	}
-	if err := proto.Unmarshal(out.Bytes(), pluginResponse); err != nil {
+	if err := proto.Unmarshal(stdout.Bytes(), pluginResponse); err != nil {
 		return err
 	}
 	for _, file := range pluginResponse.File {
