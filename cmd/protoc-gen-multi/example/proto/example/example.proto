@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package acme.example;
+
+message GreetRequest {
+  string name = 1;
+}
+message GreetResponse {
+  string message = 1;
+}
+
+service GreeterServier {
+  rpc Greet(GreetRequest) returns (GreetResponse);
+}

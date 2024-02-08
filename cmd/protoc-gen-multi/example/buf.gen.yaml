@@ -1,0 +1,19 @@
+version: v1
+managed:
+  enabled: true
+  go_package_prefix: 
+    default: "example.com"
+plugins:
+  # Use the plugin as a remote plugin.
+  # NB: ensure BSR registry and version matches.
+ - plugin: bufbuild.internal/local/multi:v1.0.3
+   out: gen
+   # Set the below options to invoke different commands.
+   opt: --go_out=.
+     --go_opt=paths=source_relative
+     --go-grpc_out=.
+     --go-grpc_opt=paths=source_relative
+     --go-vtproto_out=.
+     --go-vtproto_opt=paths=source_relative,features=marshal+unmarshal+size
+     --grpc-gateway_out=.
+     --grpc-gateway_opt=paths=source_relative,generate_unbound_methods=true

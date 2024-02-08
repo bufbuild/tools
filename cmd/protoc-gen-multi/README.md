@@ -23,6 +23,7 @@ In this example, we’ll demonstrate how to package the following plugins into t
 - `protoc-gen-go-grpc`
 - `protoc-gen-go`
 - `protoc-gen-go-vtproto`
+- `protoc-gen-grpc-gateway`
 
 
 ### Step 1 - Create an organization to push custom plugin(s)
@@ -38,12 +39,19 @@ Create a docker image with all the protoc plugins desired, plus `protoc-gen-mult
 FROM --platform=$BUILDPLATFORM golang:1.21-alpine AS build
 # Install plugins.
 ARG TARGETOS TARGETARCH
+# ~~~ Add custom plugins here ~~~
+# This is an example for installing protoc-gen-go, protoc-gen-go-grpc,
+# protoc-gen-go-vtproto and protoc-gen-grpc-gateway.
 RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
     go install -ldflags "-s -w" google.golang.org/protobuf/cmd/protoc-gen-go@v1.32
 RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
     go install -ldflags "-s -w" google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.3
 RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
     go install -ldflags "-s -w" github.com/planetscale/vtprotobuf/cmd/protoc-gen-go-vtproto@v0.5.0
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
+    go install -ldflags "-s -w" github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@v2.19
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Install protoc-gen-multi, must be installed.
 RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
     go install -ldflags "-s -w" github.com/bufbuild/tools/cmd/protoc-gen-multi@latest
 # Move binaries prefixed with GOOS_GOARCH to /go/bin.
@@ -66,19 +74,23 @@ docker buildx build --platform linux/amd64 -t buf.example.com/custom-plugins/mul
 
 At the very minimum you’ll need the following fields set:
 
-```bash
+```yaml
 version: v1
 name: buf.example.com/custom-plugins/multi
 plugin_version: v0.1.0
 output_languages:
   - go
 registry:
+  # Add the runtime deps required by your plugins for the generated SDK.
   go:
     deps:
       - module: google.golang.org/protobuf
         version: v1.32.0
       - module: google.golang.org/grpc
         version: v1.3.0
+      - module: github.com/grpc-ecosystem/grpc-gateway/v2
+        version: v2.19
+  # Add the options to invoke each plugin for the generated SDK.
   opts:
     - --go_out=.
     - --go_opt=paths=source_relative
@@ -86,6 +98,8 @@ registry:
     - --go-grpc_opt=paths=source_relative
     - --go-vtproto_out=.
     - --go-vtproto_opt=paths=source_relative,features=marshal+unmarshal+size
+    - --grpc-gateway_out=.
+    - --grpc-gateway_opt=paths=source_relative,generate_unbound_methods=true
 ```
 
 Note that typically a `buf.plugin.yaml` file defines a single plugin. However, in this case, we have three different plugins with different versions. So the version specified here should be whatever makes sense for your setup.
@@ -98,7 +112,7 @@ There are additional fields that can be set. Please refer to the `buf.plugin.yam
 ```bash
 buf beta registry plugin push \
     --visibility public \
-    --image buf.example.com/custom-plugins/multi:v1.0.0 \
+    --image buf.example.com/custom-plugins/multi:v0.1.0 \
     --override-remote=buf.example.com
 ```
 

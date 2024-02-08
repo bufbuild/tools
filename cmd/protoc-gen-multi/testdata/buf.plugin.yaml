@@ -1,6 +1,6 @@
 version: v1
 name: bufbuild.internal/local/multi
-plugin_version: v1.0.0
+plugin_version: v0.1.0
 output_languages:
   - go
 registry:

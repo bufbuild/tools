@@ -144,7 +144,10 @@ func parsePlugins(args []string) ([]plugin, error) {
 			name := strings.TrimSuffix(value, "_opt")
 			plugin := getPlugin(name)
 			plugin.name = name
-			plugin.opt = arg
+			if plugin.opt != "" {
+				plugin.opt += "," // Separate multiple opt flags with a comma.
+			}
+			plugin.opt += arg
 		} else {
 			return nil, fmt.Errorf("expected suffix \"_opt\" or \"_out\": %q", flag)
 		}
