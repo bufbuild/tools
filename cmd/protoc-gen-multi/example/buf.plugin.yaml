@@ -1,0 +1,25 @@
+version: v1
+name: bufbuild.internal/local/multi # Change me to your BSR plugin repository.
+plugin_version: v0.1.0 # Change me to your version.
+output_languages:
+  - go
+registry:
+  # Add the runtime deps required by your plugins for the generated SDK.
+  go:
+    deps:
+      - module: google.golang.org/protobuf
+        version: v1.32
+      - module: google.golang.org/grpc
+        version: v1.3
+      - module: github.com/grpc-ecosystem/grpc-gateway/v2
+        version: v2.19
+  # Add the options to invoke each plugin for the generated SDK.
+  opts:
+    - --go_out=.
+    - --go_opt=paths=source_relative
+    - --go-grpc_out=.
+    - --go-grpc_opt=paths=source_relative
+    - --go-vtproto_out=.
+    - --go-vtproto_opt=paths=source_relative,features=marshal+unmarshal+size
+    - --grpc-gateway_out=.
+    - --grpc-gateway_opt=paths=source_relative,generate_unbound_methods=true

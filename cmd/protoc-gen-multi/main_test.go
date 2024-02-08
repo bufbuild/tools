@@ -57,7 +57,7 @@ func TestGenerateMulti(t *testing.T) {
 	if err := protojson.Unmarshal(requestExample, &request); err != nil {
 		t.Fatal(err)
 	}
-	request.Parameter = proto.String("--go_out=gen --go_opt=paths=source_relative --go-vtproto_out=gen --go-vtproto_opt=paths=source_relative")
+	request.Parameter = proto.String("--go_out=gen --go_opt=paths=source_relative --go-vtproto_out=gen --go-vtproto_opt=paths=source_relative --go-vtproto_opt=features=marshal+unmarshal+size")
 	var response pluginpb.CodeGeneratorResponse
 	if err := generate(context.Background(), nil, &request, &response); err != nil {
 		t.Fatal(err)
