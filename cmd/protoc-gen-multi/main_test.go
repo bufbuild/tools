@@ -22,6 +22,7 @@ import (
 	"testing"
 
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/pluginpb"
 )
 
@@ -29,12 +30,7 @@ import (
 var requestExample []byte
 
 func TestGenerate(t *testing.T) {
-	if _, err := exec.LookPath("protoc-gen-go"); err != nil {
-		if os.IsNotExist(err) {
-			t.Skip("protoc-gen-go not found")
-		}
-		t.Fatal(err)
-	}
+	assertExist(t, "protoc-gen-go")
 	var request pluginpb.CodeGeneratorRequest
 	if err := protojson.Unmarshal(requestExample, &request); err != nil {
 		t.Fatal(err)
@@ -46,10 +42,49 @@ func TestGenerate(t *testing.T) {
 	if len(response.File) != 1 {
 		t.Fatalf("expected 1 file, got %d", len(response.File))
 	}
-	if response.File[0].GetName() != "gen/example.pb.go" {
-		t.Errorf("expected file name to be gen/example.pb.go, got %s", response.File[0].GetName())
+	if want, got := "gen/example.pb.go", response.File[0].GetName(); got != want {
+		t.Errorf("expected file name to be %s, got %s", want, got)
 	}
 	if len(response.File[0].GetContent()) == 0 {
 		t.Errorf("expected non-empty content")
+	}
+}
+
+func TestGenerateMulti(t *testing.T) {
+	assertExist(t, "protoc-gen-go")
+	assertExist(t, "protoc-gen-go-vtproto")
+	var request pluginpb.CodeGeneratorRequest
+	if err := protojson.Unmarshal(requestExample, &request); err != nil {
+		t.Fatal(err)
+	}
+	request.Parameter = proto.String("--go_out=gen --go_opt=paths=source_relative --go-vtproto_out=gen --go-vtproto_opt=paths=source_relative")
+	var response pluginpb.CodeGeneratorResponse
+	if err := generate(context.Background(), nil, &request, &response); err != nil {
+		t.Fatal(err)
+	}
+	if len(response.File) != 2 {
+		t.Fatalf("expected 2 file, got %d", len(response.File))
+	}
+	if want, got := "gen/example.pb.go", response.File[0].GetName(); got != want {
+		t.Errorf("expected file name to be %s, got %s", want, got)
+	}
+	if len(response.File[0].GetContent()) == 0 {
+		t.Errorf("expected non-empty content")
+	}
+	if want, got := "gen/example_vtproto.pb.go", response.File[1].GetName(); got != want {
+		t.Errorf("expected file name to be %s, got %s", want, got)
+	}
+	if len(response.File[1].GetContent()) == 0 {
+		t.Errorf("expected non-empty content")
+	}
+}
+
+func assertExist(t *testing.T, plugin string) {
+	t.Helper()
+	if _, err := exec.LookPath(plugin); err != nil {
+		if os.IsNotExist(err) {
+			t.Skipf("%s not found", plugin)
+		}
+		t.Fatal(err)
 	}
 }
