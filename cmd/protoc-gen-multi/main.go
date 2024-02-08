@@ -24,6 +24,7 @@ import (
 	"path"
 	"strings"
 
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/pluginpb"
 )
@@ -69,26 +70,24 @@ func generate(ctx context.Context, args []string, request *pluginpb.CodeGenerato
 	if err != nil {
 		return fmt.Errorf("invalid argument: %w", err)
 	}
-	for _, plugin := range plugins {
-		request.Parameter = proto.String(plugin.opt)
-		pluginInput, err := proto.Marshal(request)
-		if err != nil {
-			return err
-		}
+	pluginsN := len(plugins)
+	group, ctx := errgroup.WithContext(ctx)
+	outs := make([]pluginpb.CodeGeneratorResponse, pluginsN)
+	for i, plugin := range plugins {
+		plugin := plugin
+		pluginRequest := proto.Clone(request).(*pluginpb.CodeGeneratorRequest)
+		pluginResponse := &outs[i]
 		// Execute the plugin.
-		name := "protoc-gen-" + plugin.name
-		cmd := exec.CommandContext(ctx, name)
-		cmd.Stdin = bytes.NewReader(pluginInput)
-		var out bytes.Buffer
-		cmd.Stdout = &out
-		if err := cmd.Run(); err != nil {
-			return err
-		}
-		var pluginResponse pluginpb.CodeGeneratorResponse
-		if err := proto.Unmarshal(out.Bytes(), &pluginResponse); err != nil {
-			return err
-		}
+		group.Go(func() error {
+			return plugin.generate(ctx, pluginRequest, pluginResponse)
+		})
+	}
+	if err := group.Wait(); err != nil {
+		return err
+	}
+	for i := range outs {
 		// Merge the plugin response into the overall response.
+		pluginResponse := &outs[i]
 		response.Error = pluginResponse.Error
 		if response.Error != nil {
 			break
@@ -98,11 +97,6 @@ func generate(ctx context.Context, args []string, request *pluginpb.CodeGenerato
 			*response.SupportedFeatures &= *pluginResponse.SupportedFeatures
 		} else if pluginResponse.SupportedFeatures != nil {
 			response.SupportedFeatures = pluginResponse.SupportedFeatures
-		}
-		for _, file := range pluginResponse.File {
-			if file.Name != nil {
-				file.Name = proto.String(path.Join(plugin.out, file.GetName()))
-			}
 		}
 		response.File = append(response.File, pluginResponse.File...)
 	}
@@ -121,8 +115,17 @@ type plugin struct {
 //
 //	--<name>_out=<out>
 //	--<name>_opt=<opt>
-func parsePlugins(args []string) (map[string]plugin, error) {
-	plugins := make(map[string]plugin, len(args)/2)
+func parsePlugins(args []string) ([]plugin, error) {
+	plugins := make([]plugin, 0, len(args)/2)
+	pluginLookup := make(map[string]int, len(args)/2)
+	getPlugin := func(name string) *plugin {
+		if i, ok := pluginLookup[name]; ok {
+			return &plugins[i]
+		}
+		plugins = append(plugins, plugin{name: name})
+		pluginLookup[name] = len(plugins) - 1
+		return &plugins[len(plugins)-1]
+	}
 	for _, flag := range args {
 		if !strings.HasPrefix(flag, "--") {
 			return nil, fmt.Errorf("expected protoc like flag \"--<name>_(out|opt)=<param>\": %q", flag)
@@ -131,19 +134,43 @@ func parsePlugins(args []string) (map[string]plugin, error) {
 		value, arg, _ := strings.Cut(keyvalue, "=")
 		if strings.HasSuffix(value, "_out") {
 			name := strings.TrimSuffix(value, "_out")
-			plugin := plugins[name]
+			plugin := getPlugin(name)
 			plugin.name = name
 			plugin.out = arg
-			plugins[name] = plugin
 		} else if strings.HasSuffix(value, "_opt") {
 			name := strings.TrimSuffix(value, "_opt")
-			plugin := plugins[name]
+			plugin := getPlugin(name)
 			plugin.name = name
 			plugin.opt = arg
-			plugins[name] = plugin
 		} else {
 			return nil, fmt.Errorf("expected suffix \"_opt\" or \"_out\": %q", flag)
 		}
 	}
 	return plugins, nil
+}
+
+func (p plugin) generate(ctx context.Context, pluginRequest *pluginpb.CodeGeneratorRequest, pluginResponse *pluginpb.CodeGeneratorResponse) error {
+	pluginRequest.Parameter = proto.String(p.opt)
+	pluginInput, err := proto.Marshal(pluginRequest)
+	if err != nil {
+		return err
+	}
+	name := "protoc-gen-" + p.name
+	cmd := exec.CommandContext(ctx, name)
+	cmd.Stdin = bytes.NewReader(pluginInput)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	if err := cmd.Run(); err != nil {
+		return err
+	}
+	if err := proto.Unmarshal(out.Bytes(), pluginResponse); err != nil {
+		return err
+	}
+	for _, file := range pluginResponse.File {
+		fmt.Println("file", file)
+		if file.Name != nil {
+			file.Name = proto.String(path.Join(p.out, file.GetName()))
+		}
+	}
+	return nil
 }
