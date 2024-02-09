@@ -6,7 +6,7 @@ managed:
 plugins:
   # Use the plugin as a remote plugin.
   # NB: ensure BSR registry and version matches.
- - plugin: bufbuild.internal/local/multi:v1.0.3
+ - plugin: buf.example.com/custom-plugins/multi
    out: gen
    # Set the below options to invoke different commands.
    opt: --go_out=.

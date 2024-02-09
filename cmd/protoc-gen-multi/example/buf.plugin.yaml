@@ -1,5 +1,5 @@
 version: v1
-name: bufbuild.internal/local/multi # Change me to your BSR plugin repository.
+name: buf.example.com/custom-plugins/multi # Change me to your BSR plugin repository.
 plugin_version: v0.1.0 # Change me to your version.
 output_languages:
   - go
@@ -11,6 +11,8 @@ registry:
         version: v1.32
       - module: google.golang.org/grpc
         version: v1.3
+      - module: github.com/planetscale/vtprotobuf
+        version: v0.6.0
       - module: github.com/grpc-ecosystem/grpc-gateway/v2
         version: v2.19
   # Add the options to invoke each plugin for the generated SDK.
