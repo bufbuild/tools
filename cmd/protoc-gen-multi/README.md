@@ -50,7 +50,7 @@ RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
     go install -ldflags "-s -w" github.com/bufbuild/tools/cmd/protoc-gen-multi@latest
 
 # Move binaries prefixed with GOOS_GOARCH to /go/bin.
-RUN mv /go/bin/${TARGETOS}_$TARGETARCH/* /go/bin || true
+RUN mv /go/bin/${TARGETOS}_${TARGETARCH}/* /go/bin || true
 
 # Build final image.
 FROM scratch
