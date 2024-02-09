@@ -70,6 +70,9 @@ func generate(ctx context.Context, args []string, request *pluginpb.CodeGenerato
 	if err != nil {
 		return fmt.Errorf("invalid argument: %w", err)
 	}
+	if len(plugins) == 0 {
+		return fmt.Errorf("no plugins specified, expected at least one plugin: --<name>_out=<out> --<name>_opt=<opt>")
+	}
 	group, ctx := errgroup.WithContext(ctx)
 	outs := make([]pluginpb.CodeGeneratorResponse, len(plugins))
 	for i, plugin := range plugins {
