@@ -1,6 +1,6 @@
 module github.com/bufbuild/tools
 
-go 1.19
+go 1.20
 
 require (
 	github.com/bufbuild/buf v1.13.2-0.20230207175950-d4df3cea4d49
