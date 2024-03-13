@@ -2,8 +2,6 @@ module github.com/bufbuild/tools
 
 go 1.21
 
-toolchain go1.22.1
-
 require (
 	github.com/bufbuild/buf v1.13.2-0.20230207175950-d4df3cea4d49
 	github.com/spf13/cobra v1.6.1
