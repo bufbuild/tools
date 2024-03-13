@@ -1,15 +1,16 @@
 module github.com/bufbuild/tools
 
-go 1.20
+go 1.21
 
 require (
 	github.com/bufbuild/buf v1.13.2-0.20230207175950-d4df3cea4d49
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/pflag v1.0.5
-	google.golang.org/protobuf v1.28.2-0.20220831092852-f930b1dc76e8
+	google.golang.org/protobuf v1.32.0
 )
 
 require (
+	github.com/bufbuild/protoplugin v0.0.0-20240307214627-634912f18796 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/felixge/fgprof v0.9.3 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
