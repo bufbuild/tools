@@ -31,8 +31,9 @@ func main() {
 
 func handle(
 	_ context.Context,
-	responseWriter *protoplugin.ResponseWriter,
-	request *protoplugin.Request,
+	_ protoplugin.PluginEnv,
+	responseWriter protoplugin.ResponseWriter,
+	request protoplugin.Request,
 ) error {
 	data, err := protojson.MarshalOptions{
 		Indent: "  ",
