@@ -26,33 +26,33 @@ package main
 import (
 	"context"
 	"fmt"
+	"strings"
 
+	"github.com/bufbuild/buf/private/buf/bufpluginexec"
 	"github.com/bufbuild/buf/private/bufpkg/bufimage"
-	"github.com/bufbuild/buf/private/pkg/app"
-	"github.com/bufbuild/buf/private/pkg/app/appproto"
-	"github.com/bufbuild/buf/private/pkg/app/appproto/appprotoexec"
 	"github.com/bufbuild/buf/private/pkg/command"
 	"github.com/bufbuild/buf/private/pkg/thread"
-	"google.golang.org/protobuf/types/pluginpb"
+	"github.com/bufbuild/buf/private/pkg/tracing"
+	"github.com/bufbuild/protoplugin"
 )
 
 const pluginPathEnvKey = "PLUGIN_PATH"
 
 func main() {
-	appproto.Main(context.Background(), appproto.HandlerFunc(handle))
+	protoplugin.Main(protoplugin.HandlerFunc(handle))
 }
 
 func handle(
 	ctx context.Context,
-	container app.EnvStderrContainer,
-	responseWriter appproto.ResponseBuilder,
-	request *pluginpb.CodeGeneratorRequest,
+	pluginEnv protoplugin.PluginEnv,
+	responseWriter protoplugin.ResponseWriter,
+	request protoplugin.Request,
 ) error {
-	pluginPath := container.Env(pluginPathEnvKey)
+	pluginPath := getEnv(pluginEnv.Environ, pluginPathEnvKey)
 	if pluginPath == "" {
 		return fmt.Errorf("must set %s", pluginPathEnvKey)
 	}
-	image, err := bufimage.NewImageForCodeGeneratorRequest(request)
+	image, err := bufimage.NewImageForCodeGeneratorRequest(request.CodeGeneratorRequest())
 	if err != nil {
 		return err
 	}
@@ -60,17 +60,17 @@ func handle(
 	if err != nil {
 		return err
 	}
-	requestsByDir := bufimage.ImagesToCodeGeneratorRequests(
+	requestsByDir, err := bufimage.ImagesToCodeGeneratorRequests(
 		imagesByDir,
-		request.GetParameter(),
-		request.GetCompilerVersion(),
+		request.Parameter(),
+		request.CompilerVersion().ToProto(),
 		false,
 		false,
 	)
 	if err != nil {
 		return err
 	}
-	handler, err := appprotoexec.NewBinaryHandler(command.NewRunner(), pluginPath)
+	handler, err := bufpluginexec.NewBinaryHandler(command.NewRunner(), tracing.NopTracer, pluginPath, nil)
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,11 @@ func handle(
 		jobs = append(
 			jobs,
 			func(ctx context.Context) error {
-				return handler.Handle(ctx, container, responseWriter, requestByDir)
+				request, err := protoplugin.NewRequest(requestByDir)
+				if err != nil {
+					return err
+				}
+				return handler.Handle(ctx, pluginEnv, responseWriter, request)
 			},
 		)
 	}
@@ -88,4 +92,17 @@ func handle(
 		return err
 	}
 	return nil
+}
+
+func getEnv(environ []string, key string) string {
+	for _, e := range environ {
+		split := strings.SplitN(e, "=", 2)
+		if len(split) != 2 {
+			continue
+		}
+		if split[0] == key {
+			return split[1]
+		}
+	}
+	return ""
 }
