@@ -27,7 +27,8 @@ linters:
     - gocognit          # dubious "cognitive overhead" quantification
     - gofumpt           # prefer standard gofmt
     - goimports         # rely on gci instead
-    - gomnd             # some unnamed constants are okay
+    - gomnd             # deprecated in golangci v1.58
+    - mnd               # some unnamed constants are okay
     - ireturn           # "accept interfaces, return structs" isn't ironclad
     - lll               # don't want hard limits for line length
     - maintidx          # covered by gocyclo

@@ -95,8 +95,8 @@ func handle(
 
 func getEnv(environ []string, key string) string {
 	for _, e := range environ {
-		split := strings.SplitN(e, "=", 2) //nolint:mnd
-		if len(split) != 2 {               //nolint:mnd
+		split := strings.SplitN(e, "=", 2)
+		if len(split) != 2 {
 			continue
 		}
 		if split[0] == key {
