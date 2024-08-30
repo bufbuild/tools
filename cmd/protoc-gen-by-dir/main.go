@@ -76,7 +76,6 @@ func handle(
 	}
 	jobs := make([]func(context.Context) error, 0, len(requestsByDir))
 	for _, requestByDir := range requestsByDir {
-		requestByDir := requestByDir
 		jobs = append(
 			jobs,
 			func(ctx context.Context) error {
@@ -96,8 +95,8 @@ func handle(
 
 func getEnv(environ []string, key string) string {
 	for _, e := range environ {
-		split := strings.SplitN(e, "=", 2)
-		if len(split) != 2 {
+		split := strings.SplitN(e, "=", 2) //nolint:mnd
+		if len(split) != 2 {               //nolint:mnd
 			continue
 		}
 		if split[0] == key {

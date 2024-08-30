@@ -177,7 +177,7 @@ func run(ctx context.Context, container app.Container, flags *flags) error {
 						return err
 					}
 					if flags.ExitCode {
-						return app.NewError(100, "")
+						return app.NewError(100, "") //nolint:mnd
 					}
 				}
 			} else {
