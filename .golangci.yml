@@ -38,6 +38,7 @@ linters:
     - wrapcheck         # don't _always_ need to wrap errors
     - wsl               # generous whitespace violates house style
     - exhaustruct       # exhaustive struct checks are noisy
+    - exportloopref     # replaced by copyloopvar
 issues:
   exclude-dirs-use-default: false
   exclude:
