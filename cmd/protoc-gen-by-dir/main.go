@@ -1,4 +1,4 @@
-// Copyright 2023 Buf Technologies, Inc.
+// Copyright 2023-2024 Buf Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/bufbuild/buf/private/buf/bufpluginexec"
+	"github.com/bufbuild/buf/private/buf/bufprotopluginexec"
 	"github.com/bufbuild/buf/private/bufpkg/bufimage"
 	"github.com/bufbuild/buf/private/pkg/command"
 	"github.com/bufbuild/buf/private/pkg/thread"
@@ -70,7 +70,7 @@ func handle(
 	if err != nil {
 		return err
 	}
-	handler, err := bufpluginexec.NewBinaryHandler(command.NewRunner(), tracing.NopTracer, pluginPath, nil)
+	handler, err := bufprotopluginexec.NewBinaryHandler(command.NewRunner(), tracing.NopTracer, pluginPath, nil)
 	if err != nil {
 		return err
 	}

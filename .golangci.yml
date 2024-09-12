@@ -20,23 +20,25 @@ linters-settings:
 linters:
   enable-all: true
   disable:
+    - copyloopvar       # keep around for now
     - cyclop            # covered by gocyclo
-    - depguard          # unnecessary for small libraries
-    - execinquery       # deprecated in golangci v1.58 
+    - depguard          # lots of exceptions for this specific module
+    - execinquery       # deprecated in golangci v1.58
     - funlen            # rely on code review to limit function length
     - gocognit          # dubious "cognitive overhead" quantification
     - gofumpt           # prefer standard gofmt
     - goimports         # rely on gci instead
     - gomnd             # deprecated in golangci v1.58 in favor of mnd
-    - mnd               # some unnamed constants are okay
     - ireturn           # "accept interfaces, return structs" isn't ironclad
     - lll               # don't want hard limits for line length
     - maintidx          # covered by gocyclo
+    - mnd               # some unnamed constants are okay
     - nlreturn          # generous whitespace violates house style
     - testpackage       # internal tests are fine
     - wrapcheck         # don't _always_ need to wrap errors
     - wsl               # generous whitespace violates house style
     - exhaustruct       # exhaustive struct checks are noisy
+    - exportloopref     # replaced by copyloopvar
 issues:
   exclude-dirs-use-default: false
   exclude:
