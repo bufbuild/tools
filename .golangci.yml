@@ -22,27 +22,21 @@ linters-settings:
 linters:
   enable-all: true
   disable:
+    - copyloopvar       # keep around for now
     - cyclop            # covered by gocyclo
-    - deadcode          # abandoned
-    - exhaustivestruct  # replaced by exhaustruct
+    - depguard          # lots of exceptions for this specific module
+    - err113            # allow this
     - funlen            # rely on code review to limit function length
     - gocognit          # dubious "cognitive overhead" quantification
     - gofumpt           # prefer standard gofmt
     - goimports         # rely on gci instead
-    - golint            # deprecated by Go team
     - gomnd             # some unnamed constants are okay
-    - ifshort           # deprecated by author
-    - interfacer        # deprecated by author
     - ireturn           # "accept interfaces, return structs" isn't ironclad
     - lll               # don't want hard limits for line length
     - maintidx          # covered by gocyclo
-    - maligned          # readability trumps efficient struct packing
+    - mnd               # some unnamed constants are okay
     - nlreturn          # generous whitespace violates house style
-    - nosnakecase       # deprecated in https://github.com/golangci/golangci-lint/pull/3065
-    - scopelint         # deprecated by author
-    - structcheck       # abandoned
     - testpackage       # internal tests are fine
-    - varcheck          # abandoned
     - wrapcheck         # don't _always_ need to wrap errors
     - wsl               # generous whitespace violates house style
     - exhaustruct       # exhaustive struct checks are noisy
