@@ -76,7 +76,6 @@ func handle(
 	}
 	jobs := make([]func(context.Context) error, 0, len(requestsByDir))
 	for _, requestByDir := range requestsByDir {
-		requestByDir := requestByDir
 		jobs = append(
 			jobs,
 			func(ctx context.Context) error {
