@@ -3,7 +3,13 @@
   "version": "0.0.4",
   "description": "Handle license headers",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bufbuild/tools.git",
+    "directory": "npm-packages/license-header"
+  },
   "scripts": {
+    "all": "node --test",
     "test": "node --test",
     "license-header": "license-header --ignore 'testdata/**'"
   },
