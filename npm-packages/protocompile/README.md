@@ -27,6 +27,6 @@ describe("redact", () => {
 
 The package also exports functions to compile Protobuf descriptors for all other types, such as enumerations and services.
 
-Under the hood, the functions shell out to the `buf build` command. You have to install [@bufbuild/buf](https://www.npmjs.com/package/@bufbuild/buf) to use them.
+Under the hood, the functions shell out to the `buf build` command. You need [@bufbuild/buf](https://www.npmjs.com/package/@bufbuild/buf) as a peer dependency to use them.
 
 Note that the functions return anonymous descriptors. They are functionally identical to generated descriptors, but do not have generated type information attached.
