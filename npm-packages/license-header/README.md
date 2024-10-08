@@ -1,4 +1,4 @@
-# license-header
+# @bufbuild/license-header
 
 A tool to add and update license headers in source code.
 

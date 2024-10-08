@@ -1,9 +1,11 @@
 {
   "private": true,
   "workspaces": [
-    "./npm-packages/license-header"
+    "./npm-packages/license-header",
+    "./npm-packages/protocompile"
   ],
   "scripts": {
+    "all": "npm run -ws all",
     "test": "npm run -ws test --if-present",
     "generate": "npm run -ws generate --if-present"
   },

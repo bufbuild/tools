@@ -1,6 +1,7 @@
 /.tmp/
 /license-header
 /protoc-gen-by-dir
+/npm-packages/*/dist
 *.pprof
 *.svg
 cover.out
