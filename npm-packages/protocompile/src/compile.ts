@@ -113,7 +113,7 @@ export function compileMethod<Kind extends DescMethod["methodKind"]>(
   proto: string,
   methodKind: Kind,
   options?: CompileOptions,
-): DescMethod & { methodKind: Kind };
+): Omit<DescMethod, "methodKind"> & { readonly methodKind: Kind };
 
 export function compileMethod(
   proto: string,
