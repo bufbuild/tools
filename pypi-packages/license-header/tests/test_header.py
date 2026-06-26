@@ -168,17 +168,17 @@ def test_make_header_proto() -> None:
 def test_modify_proto_no_header() -> None:
     content = 'syntax = "proto3";\n'
     result = modify(content, EXPECTED_PROTO_HEADER, DOUBLE_SLASH)
-    assert result == f"{EXPECTED_PROTO_HEADER}syntax = \"proto3\";\n"
+    assert result == f'{EXPECTED_PROTO_HEADER}syntax = "proto3";\n'
 
 
 def test_modify_proto_correct_header_unchanged() -> None:
-    content = f"{EXPECTED_PROTO_HEADER}\nsyntax = \"proto3\";\n"
+    content = f'{EXPECTED_PROTO_HEADER}\nsyntax = "proto3";\n'
     result = modify(content, EXPECTED_PROTO_HEADER, DOUBLE_SLASH)
     assert result == content
 
 
 def test_modify_proto_outdated_header_replaced() -> None:
     old_header = EXPECTED_PROTO_HEADER.replace("2025-2026", "2024")
-    content = f"{old_header}\nsyntax = \"proto3\";\n"
+    content = f'{old_header}\nsyntax = "proto3";\n'
     result = modify(content, EXPECTED_PROTO_HEADER, DOUBLE_SLASH)
-    assert result == f"{EXPECTED_PROTO_HEADER}\nsyntax = \"proto3\";\n"
+    assert result == f'{EXPECTED_PROTO_HEADER}\nsyntax = "proto3";\n'
