@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "pypi-packages/license-header/**"
+      - ".github/workflows/pypi-license-header.yaml"
+  pull_request:
+    paths:
+      - "pypi-packages/license-header/**"
+      - ".github/workflows/pypi-license-header.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: pypi-packages/license-header
+
+jobs:
+  test:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        runner:
+          - ubuntu-24.04
+          - macos-15
+          - windows-2025
+
+        python-version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
+          - "3.14t"
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install uv with Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        with:
+          version: "0.11.23"
+          python-version: ${{ matrix.python-version }}
+
+      - run: uv sync --locked
+
+      - run: uv run poe test
+
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        with:
+          version: "0.11.23"
+          python-version: "3.10"
+
+      - run: uv sync --locked
+
+      - run: uv run poe lint
+
+  release:
+    runs-on: ubuntu-24.04
+    needs: [test, lint]
+    environment: ${{ github.event_name != 'pull_request' && 'pypi-license-header' || null }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        with:
+          version: "0.11.23"
+          python-version: "3.10"
+
+      - run: uv sync --frozen
+
+      - run: uv build
+
+      - name: publish
+        if: github.event_name != 'pull_request'
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
+        with:
+          skip-existing: true
