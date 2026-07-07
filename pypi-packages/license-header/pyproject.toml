@@ -1,0 +1,76 @@
+[project]
+name = "license-header"
+version = "0.0.1"
+description = "Handle license headers"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+dependencies = ["tomli==2.4.1"]
+
+[project.scripts]
+license-header = "license_header:main"
+
+[dependency-groups]
+dev = [
+  "poethepoet==0.46.0",
+  "pytest==9.1.1",
+  "pytest-cov==7.1.0",
+  "ruff==0.15.18",
+  "tombi==1.1.4",
+  "ty==0.0.51",
+]
+
+[build-system]
+requires = ["uv_build>=0.11.2,<0.12"]
+build-backend = "uv_build"
+
+[tool.licenseheader]
+copyright-holder = "Buf Technologies, Inc."
+year-range = "2025-2026"
+
+## Format
+[tool.poe.tasks.format]
+help = "Apply all autoformatting"
+sequence = ["format-license-header", "format-python", "format-toml"]
+
+[tool.poe.tasks.format-python]
+help = "Format Python files with ruff"
+sequence = [
+  { cmd = "ruff check --fix --unsafe-fixes --exit-zero ." },
+  { cmd = "ruff format" }
+]
+
+[tool.poe.tasks.format-license-header]
+help = "Add/update license headers in source files"
+cmd = "license-header"
+
+[tool.poe.tasks.format-toml]
+help = "Format TOML files with tombi"
+cmd = "tombi format"
+
+[tool.poe.tasks.lint]
+help = "Apply all lints"
+sequence = ["lint-license-header", "lint-python", "lint-toml"]
+
+[tool.poe.tasks.lint-license-header]
+help = "Lint license headers"
+cmd = "license-header --check"
+
+[tool.poe.tasks.lint-python]
+help = "Lint Python files"
+sequence = [
+  { cmd = "ruff check ." },
+  { cmd = "ruff format --check ." },
+  { cmd = "ty check" },
+]
+
+[tool.poe.tasks.lint-toml]
+help = "Lint TOML files"
+cmd = "tombi lint"
+
+[tool.poe.tasks.test]
+help = "Run tests"
+cmd = "pytest"
+
+[tool.pytest]
+filterwarnings = ["error"]
