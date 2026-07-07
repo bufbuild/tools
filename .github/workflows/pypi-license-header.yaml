@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 defaults:
   run:
@@ -85,4 +86,5 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
         with:
+          packages-dir: pypi-packages/license-header/dist
           skip-existing: true
