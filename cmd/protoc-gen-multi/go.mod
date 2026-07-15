@@ -1,10 +1,8 @@
 module github.com/bufbuild/tools/cmd/protoc-gen-multi
 
-go 1.21.3
+go 1.25.0
 
 require (
-	golang.org/x/sync v0.6.0
-	google.golang.org/protobuf v1.33.0
+	golang.org/x/sync v0.22.0
+	google.golang.org/protobuf v1.36.11
 )
-
-require github.com/google/go-cmp v0.6.0 // indirect
