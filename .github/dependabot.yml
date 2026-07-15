@@ -4,3 +4,19 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      go:
+        patterns:
+          - "*"
+  - package-ecosystem: "gomod"
+    directory: "/cmd/protoc-gen-multi"
+    schedule:
+      interval: "weekly"
+    groups:
+      protoc-gen-multi:
+        patterns:
+          - "*"
