@@ -1,14 +1,15 @@
 module github.com/bufbuild/tools
 
-go 1.22.0
+go 1.23.0
+
 toolchain go1.24.1
 
 require (
 	github.com/bufbuild/buf v1.41.1-0.20240912173619-72a0a4b67641
 	github.com/bufbuild/protoplugin v0.0.0-20240911180120-7bb73e41a54a
-	github.com/spf13/cobra v1.8.1
-	github.com/spf13/pflag v1.0.5
-	google.golang.org/protobuf v1.34.3-0.20240816073751-94ecbc261689
+	github.com/spf13/cobra v1.10.2
+	github.com/spf13/pflag v1.0.9
+	google.golang.org/protobuf v1.36.11
 )
 
 require (
@@ -17,7 +18,7 @@ require (
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/bufbuild/protocompile v0.14.1 // indirect
 	github.com/bufbuild/protovalidate-go v0.6.5 // indirect
-	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
+	github.com/cpuguy83/go-md2man/v2 v2.0.6 // indirect
 	github.com/gofrs/uuid/v5 v5.3.0 // indirect
 	github.com/google/cel-go v0.21.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
@@ -28,6 +29,7 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
+	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.35.0 // indirect
 	golang.org/x/exp v0.0.0-20240909161429-701f63a606c0 // indirect
 	golang.org/x/mod v0.21.0 // indirect
