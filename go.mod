@@ -6,7 +6,7 @@ require (
 	github.com/bufbuild/buf v1.41.1-0.20240912173619-72a0a4b67641
 	github.com/bufbuild/protoplugin v0.0.0-20240911180120-7bb73e41a54a
 	github.com/spf13/cobra v1.10.2
-	github.com/spf13/pflag v1.0.9
+	github.com/spf13/pflag v1.0.10
 	google.golang.org/protobuf v1.36.11
 )
 
